@@ -1,0 +1,37 @@
+
+# SepsisGuard Model Training Report
+Generated on: 2025-08-24 08:48:29
+
+## Dataset Summary
+- Total Samples: 6,661
+- Total Features: 884
+- Selected Features: 100
+- Training Time: 0.8 minutes
+
+## Model Performance
+- XGBoost AUC: 0.8489
+- LSTM AUC: 0.8364
+- Ensemble AUC: 0.8554
+
+## Clinical Metrics
+- Optimal Threshold: 0.157
+- Accuracy: 0.770
+- Precision: 0.452
+- Recall (Sensitivity): 0.798
+- F1-Score: 0.577
+
+## Cross-Validation Results
+- Mean AUC: 0.8498 ± 0.0164
+- Range: 0.8186 - 0.8660
+
+## Top 10 Most Important Features
+1. ptt_1: 0.004
+2. urine_24: 0.004
+3. urine_8: 0.003
+4. mbp_16: 0.003
+5. resp_rate_20: 0.003
+6. temperature_10: 0.003
+7. heart_rate_12: 0.003
+8. neutrophils_abs_12: 0.003
+9. subject_id: 0.003
+10. heart_rate_3: 0.003

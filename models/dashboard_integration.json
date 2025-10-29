@@ -1,0 +1,520 @@
+{
+  "selected_features": [
+    "glucose_10",
+    "sofa_14",
+    "lymphocytes_abs_24",
+    "liquid_12",
+    "po2_4",
+    "lactate_22",
+    "ptt_6",
+    "ln_bun_18",
+    "ph_18",
+    "\u8840\u7ba1\u52a0\u538b\u7d20\u7c7b_5",
+    "ln_mbp_12",
+    "temperature_16",
+    "type1",
+    "ln_bun_24",
+    "pt_18",
+    "sofa_6",
+    "ph_20",
+    "neutrophils_abs_14",
+    "alt_6",
+    "heart_rate_3",
+    "mbp_20",
+    "sofa",
+    "sqrt_platelet_24",
+    "\u8840\u7ba1\u52a0\u538b\u7d20\u7c7b_24",
+    "hadm_id",
+    "lactate_18",
+    "temperature_10",
+    "inv_ptt_12",
+    "temperature_22",
+    "heart_rate_24",
+    "lactate_16",
+    "inv_pt_12",
+    "epinephrine in 6h",
+    "inv_pt_1",
+    "temperature_4",
+    "norepinephrine_18",
+    "resp_rate_20",
+    "mbp_16",
+    "sofa_5",
+    "pt_24",
+    "sqrt1_lactate_18",
+    "urine_16",
+    "\u603b\u5242\u91cf_5",
+    "resp_rate_4",
+    "potassium_1",
+    "pao2fio2ratio_1",
+    "pao2fio2ratio_22",
+    "chloride_14",
+    "urine_24",
+    "\u603b\u5242\u91cf_24",
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_8",
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_20",
+    "inv_ptt_24",
+    "ln_ph_12",
+    "neutrophils_abs_12",
+    "heart_rate_4",
+    "ph_22",
+    "urine_14",
+    "ast_4",
+    "inv_pt_18",
+    "urine_8",
+    "ln_ph_18",
+    "epinephrine in 1h",
+    "neutrophils_abs_1",
+    "lactate_8",
+    "urine_20",
+    "liquid_1",
+    "sofa_4",
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_5",
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_4",
+    "urine_22",
+    "norepinephrine_6",
+    "glucose_22",
+    "heart_rate_12",
+    "ventilation",
+    "lactate_6",
+    "ph_3",
+    "sqrt_albumin_1",
+    "temperature_20",
+    "ln_pco2_1",
+    "subject_id",
+    "sqrt1_glucose_24",
+    "ptt_5",
+    "\u603b\u5242\u91cf_20",
+    "inv_ptt_6",
+    "temperature_14",
+    "ph_2",
+    "vasopressin in 6h",
+    "hemoglobin_10",
+    "sqrt1_lactate_24",
+    "ptt_1",
+    "spo2_18",
+    "hemoglobin_1",
+    "sqrt_heart_rate_6",
+    "sofa_1",
+    "bun_10",
+    "norepinephrine_4",
+    "lactate_2",
+    "resp_rate_16",
+    "rrt.1"
+  ],
+  "feature_importance": {
+    "glucose_10": {
+      "rf_importance": 0.0022509743224973264,
+      "combined_score": 0.0022509743224973264
+    },
+    "sofa_14": {
+      "rf_importance": 0.0013412932599303534,
+      "combined_score": 0.0013412932599303534
+    },
+    "lymphocytes_abs_24": {
+      "rf_importance": 0.0021831474869057096,
+      "combined_score": 0.0021831474869057096
+    },
+    "liquid_12": {
+      "rf_importance": 0.0021749539848717734,
+      "combined_score": 0.0021749539848717734
+    },
+    "po2_4": {
+      "rf_importance": 0.0022197844867845543,
+      "combined_score": 0.0022197844867845543
+    },
+    "lactate_22": {
+      "rf_importance": 0.002713376162440489,
+      "combined_score": 0.002713376162440489
+    },
+    "ptt_6": {
+      "rf_importance": 0.0021704057648992297,
+      "combined_score": 0.0021704057648992297
+    },
+    "ln_bun_18": {
+      "rf_importance": 0.0013397669798175945,
+      "combined_score": 0.0013397669798175945
+    },
+    "ph_18": {
+      "rf_importance": 0.0017918301209757796,
+      "combined_score": 0.0017918301209757796
+    },
+    "\u8840\u7ba1\u52a0\u538b\u7d20\u7c7b_5": {
+      "rf_importance": 0.0,
+      "combined_score": 0.0
+    },
+    "ln_mbp_12": {
+      "rf_importance": 0.002385818237440768,
+      "combined_score": 0.002385818237440768
+    },
+    "temperature_16": {
+      "rf_importance": 0.0022634496517860694,
+      "combined_score": 0.0022634496517860694
+    },
+    "type1": {
+      "rf_importance": 0.00026606717961384207,
+      "combined_score": 0.00026606717961384207
+    },
+    "ln_bun_24": {
+      "rf_importance": 0.001716571270798362,
+      "combined_score": 0.001716571270798362
+    },
+    "pt_18": {
+      "rf_importance": 0.00210062680764989,
+      "combined_score": 0.00210062680764989
+    },
+    "sofa_6": {
+      "rf_importance": 0.0014402932196796872,
+      "combined_score": 0.0014402932196796872
+    },
+    "ph_20": {
+      "rf_importance": 0.0023743525553807563,
+      "combined_score": 0.0023743525553807563
+    },
+    "neutrophils_abs_14": {
+      "rf_importance": 0.002187321306469706,
+      "combined_score": 0.002187321306469706
+    },
+    "alt_6": {
+      "rf_importance": 0.002173802006511789,
+      "combined_score": 0.002173802006511789
+    },
+    "heart_rate_3": {
+      "rf_importance": 0.0030348325472340913,
+      "combined_score": 0.0030348325472340913
+    },
+    "mbp_20": {
+      "rf_importance": 0.0021949391163023227,
+      "combined_score": 0.0021949391163023227
+    },
+    "sofa": {
+      "rf_importance": 0.001649732580925861,
+      "combined_score": 0.001649732580925861
+    },
+    "sqrt_platelet_24": {
+      "rf_importance": 0.0023406187136960116,
+      "combined_score": 0.0023406187136960116
+    },
+    "\u8840\u7ba1\u52a0\u538b\u7d20\u7c7b_24": {
+      "rf_importance": 0.0,
+      "combined_score": 0.0
+    },
+    "hadm_id": {
+      "rf_importance": 0.0023255482460420407,
+      "combined_score": 0.0023255482460420407
+    },
+    "lactate_18": {
+      "rf_importance": 0.001866357640990283,
+      "combined_score": 0.001866357640990283
+    },
+    "temperature_10": {
+      "rf_importance": 0.0031947731832432497,
+      "combined_score": 0.0031947731832432497
+    },
+    "inv_ptt_12": {
+      "rf_importance": 0.0025290827127621854,
+      "combined_score": 0.0025290827127621854
+    },
+    "temperature_22": {
+      "rf_importance": 0.002438327015434785,
+      "combined_score": 0.002438327015434785
+    },
+    "heart_rate_24": {
+      "rf_importance": 0.0025607509038162346,
+      "combined_score": 0.0025607509038162346
+    },
+    "lactate_16": {
+      "rf_importance": 0.0012333724893760598,
+      "combined_score": 0.0012333724893760598
+    },
+    "inv_pt_12": {
+      "rf_importance": 0.0009220570352048474,
+      "combined_score": 0.0009220570352048474
+    },
+    "epinephrine in 6h": {
+      "rf_importance": 0.00039176029339583644,
+      "combined_score": 0.00039176029339583644
+    },
+    "inv_pt_1": {
+      "rf_importance": 0.0012821332209926766,
+      "combined_score": 0.0012821332209926766
+    },
+    "temperature_4": {
+      "rf_importance": 0.0025081484852746776,
+      "combined_score": 0.0025081484852746776
+    },
+    "norepinephrine_18": {
+      "rf_importance": 0.00026886383846210974,
+      "combined_score": 0.00026886383846210974
+    },
+    "resp_rate_20": {
+      "rf_importance": 0.0032836653006539356,
+      "combined_score": 0.0032836653006539356
+    },
+    "mbp_16": {
+      "rf_importance": 0.0033412909515289873,
+      "combined_score": 0.0033412909515289873
+    },
+    "sofa_5": {
+      "rf_importance": 0.0007858012757508689,
+      "combined_score": 0.0007858012757508689
+    },
+    "pt_24": {
+      "rf_importance": 0.0020068142496474234,
+      "combined_score": 0.0020068142496474234
+    },
+    "sqrt1_lactate_18": {
+      "rf_importance": 0.0012469277635689447,
+      "combined_score": 0.0012469277635689447
+    },
+    "urine_16": {
+      "rf_importance": 0.002546005720430075,
+      "combined_score": 0.002546005720430075
+    },
+    "\u603b\u5242\u91cf_5": {
+      "rf_importance": 0.00035415060241942415,
+      "combined_score": 0.00035415060241942415
+    },
+    "resp_rate_4": {
+      "rf_importance": 0.002596758848316058,
+      "combined_score": 0.002596758848316058
+    },
+    "potassium_1": {
+      "rf_importance": 0.0023335976106677947,
+      "combined_score": 0.0023335976106677947
+    },
+    "pao2fio2ratio_1": {
+      "rf_importance": 0.0022196513436737284,
+      "combined_score": 0.0022196513436737284
+    },
+    "pao2fio2ratio_22": {
+      "rf_importance": 0.0028444034266630284,
+      "combined_score": 0.0028444034266630284
+    },
+    "chloride_14": {
+      "rf_importance": 0.0024097414815251825,
+      "combined_score": 0.0024097414815251825
+    },
+    "urine_24": {
+      "rf_importance": 0.0037226041679894986,
+      "combined_score": 0.0037226041679894986
+    },
+    "\u603b\u5242\u91cf_24": {
+      "rf_importance": 0.0001955514077037743,
+      "combined_score": 0.0001955514077037743
+    },
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_8": {
+      "rf_importance": 0.00038918483399154286,
+      "combined_score": 0.00038918483399154286
+    },
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_20": {
+      "rf_importance": 0.00034407915064509585,
+      "combined_score": 0.00034407915064509585
+    },
+    "inv_ptt_24": {
+      "rf_importance": 0.0015703377282129773,
+      "combined_score": 0.0015703377282129773
+    },
+    "ln_ph_12": {
+      "rf_importance": 0.0013797490703310246,
+      "combined_score": 0.0013797490703310246
+    },
+    "neutrophils_abs_12": {
+      "rf_importance": 0.0031036296685071157,
+      "combined_score": 0.0031036296685071157
+    },
+    "heart_rate_4": {
+      "rf_importance": 0.0029045039774505837,
+      "combined_score": 0.0029045039774505837
+    },
+    "ph_22": {
+      "rf_importance": 0.0022600681607515467,
+      "combined_score": 0.0022600681607515467
+    },
+    "urine_14": {
+      "rf_importance": 0.0023711776197690875,
+      "combined_score": 0.0023711776197690875
+    },
+    "ast_4": {
+      "rf_importance": 0.0021135312830821004,
+      "combined_score": 0.0021135312830821004
+    },
+    "inv_pt_18": {
+      "rf_importance": 0.001733704149095682,
+      "combined_score": 0.001733704149095682
+    },
+    "urine_8": {
+      "rf_importance": 0.0034446786152297396,
+      "combined_score": 0.0034446786152297396
+    },
+    "ln_ph_18": {
+      "rf_importance": 0.00140980988860424,
+      "combined_score": 0.00140980988860424
+    },
+    "epinephrine in 1h": {
+      "rf_importance": 0.000216285903347734,
+      "combined_score": 0.000216285903347734
+    },
+    "neutrophils_abs_1": {
+      "rf_importance": 0.0025454409612497685,
+      "combined_score": 0.0025454409612497685
+    },
+    "lactate_8": {
+      "rf_importance": 0.000929341167683484,
+      "combined_score": 0.000929341167683484
+    },
+    "urine_20": {
+      "rf_importance": 0.002860911909206451,
+      "combined_score": 0.002860911909206451
+    },
+    "liquid_1": {
+      "rf_importance": 0.002591301509682838,
+      "combined_score": 0.002591301509682838
+    },
+    "sofa_4": {
+      "rf_importance": 0.001774094559128514,
+      "combined_score": 0.001774094559128514
+    },
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_5": {
+      "rf_importance": 0.0003263592648875378,
+      "combined_score": 0.0003263592648875378
+    },
+    "\u53bb\u7532\u80be\u4e0a\u817a\u7d20\u7c7b_4": {
+      "rf_importance": 0.00040216111701528814,
+      "combined_score": 0.00040216111701528814
+    },
+    "urine_22": {
+      "rf_importance": 0.002773862546718448,
+      "combined_score": 0.002773862546718448
+    },
+    "norepinephrine_6": {
+      "rf_importance": 0.00017894015318456805,
+      "combined_score": 0.00017894015318456805
+    },
+    "glucose_22": {
+      "rf_importance": 0.0024542451700219035,
+      "combined_score": 0.0024542451700219035
+    },
+    "heart_rate_12": {
+      "rf_importance": 0.0031827145888560335,
+      "combined_score": 0.0031827145888560335
+    },
+    "ventilation": {
+      "rf_importance": 0.0003322462632792592,
+      "combined_score": 0.0003322462632792592
+    },
+    "lactate_6": {
+      "rf_importance": 0.0015196733796974215,
+      "combined_score": 0.0015196733796974215
+    },
+    "ph_3": {
+      "rf_importance": 0.0026342732967085257,
+      "combined_score": 0.0026342732967085257
+    },
+    "sqrt_albumin_1": {
+      "rf_importance": 0.002173867647779762,
+      "combined_score": 0.002173867647779762
+    },
+    "temperature_20": {
+      "rf_importance": 0.0028220321008229016,
+      "combined_score": 0.0028220321008229016
+    },
+    "ln_pco2_1": {
+      "rf_importance": 0.0023499097748972187,
+      "combined_score": 0.0023499097748972187
+    },
+    "subject_id": {
+      "rf_importance": 0.003090243449833233,
+      "combined_score": 0.003090243449833233
+    },
+    "sqrt1_glucose_24": {
+      "rf_importance": 0.0022418797602580484,
+      "combined_score": 0.0022418797602580484
+    },
+    "ptt_5": {
+      "rf_importance": 0.0022858206877772688,
+      "combined_score": 0.0022858206877772688
+    },
+    "\u603b\u5242\u91cf_20": {
+      "rf_importance": 0.0008928413495432789,
+      "combined_score": 0.0008928413495432789
+    },
+    "inv_ptt_6": {
+      "rf_importance": 0.002414295072180521,
+      "combined_score": 0.002414295072180521
+    },
+    "temperature_14": {
+      "rf_importance": 0.0025298671578944556,
+      "combined_score": 0.0025298671578944556
+    },
+    "ph_2": {
+      "rf_importance": 0.0021788337400663375,
+      "combined_score": 0.0021788337400663375
+    },
+    "vasopressin in 6h": {
+      "rf_importance": 0.00011604756696379619,
+      "combined_score": 0.00011604756696379619
+    },
+    "hemoglobin_10": {
+      "rf_importance": 0.0021643178044399016,
+      "combined_score": 0.0021643178044399016
+    },
+    "sqrt1_lactate_24": {
+      "rf_importance": 0.0012233830771252942,
+      "combined_score": 0.0012233830771252942
+    },
+    "ptt_1": {
+      "rf_importance": 0.0037685438549865374,
+      "combined_score": 0.0037685438549865374
+    },
+    "spo2_18": {
+      "rf_importance": 0.0012300001222706979,
+      "combined_score": 0.0012300001222706979
+    },
+    "hemoglobin_1": {
+      "rf_importance": 0.0024479509981922185,
+      "combined_score": 0.0024479509981922185
+    },
+    "sqrt_heart_rate_6": {
+      "rf_importance": 0.0025522117767032312,
+      "combined_score": 0.0025522117767032312
+    },
+    "sofa_1": {
+      "rf_importance": 0.0004949804937427862,
+      "combined_score": 0.0004949804937427862
+    },
+    "bun_10": {
+      "rf_importance": 0.0021564575374902126,
+      "combined_score": 0.0021564575374902126
+    },
+    "norepinephrine_4": {
+      "rf_importance": 0.0011741872258965768,
+      "combined_score": 0.0011741872258965768
+    },
+    "lactate_2": {
+      "rf_importance": 0.0011784176045898174,
+      "combined_score": 0.0011784176045898174
+    },
+    "resp_rate_16": {
+      "rf_importance": 0.0022262694017827676,
+      "combined_score": 0.0022262694017827676
+    },
+    "rrt.1": {
+      "rf_importance": 0.0,
+      "combined_score": 0.0
+    }
+  },
+  "model_config": {
+    "static_features": 30,
+    "temporal_features": 20,
+    "sequence_length": 10,
+    "threshold": 0.5
+  },
+  "performance_metrics": {
+    "xgboost_auc": 0.8488784826907861,
+    "lstm_auc": 0.8364266826323403,
+    "ensemble_auc": 0.8554001753373105,
+    "training_time_minutes": 0.8125471
+  },
+  "training_date": "2025-08-24T08:59:12.431881",
+  "version": "1.0"
+}

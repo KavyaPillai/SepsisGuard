@@ -1,0 +1,36 @@
+Python
+
+pycache/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.eggs/
+*.egg-info/
+*.egg
+
+Environment variables
+
+.env
+*.env
+
+Notebooks
+
+.ipynb_checkpoints
+
+Data (if large or sensitive)
+
+*.csv
+
+*.pkl
+
+IDE / Editor
+
+.vscode/
+.idea/
+*.swp
+*.swo

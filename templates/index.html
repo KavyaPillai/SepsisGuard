@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SepsisGuard - Clinical Decision Support System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-light: #3b82f6;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --critical-red: #dc2626;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-surface: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+        }
+
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: var(--gradient-primary);
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .header {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.1rem;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .connection-status.connected {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .connection-status.disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .notification-btn:hover {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-red);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-blue);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .input-field.warning {
+            border-color: var(--warning-orange);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .input-field.critical {
+            border-color: var(--danger-red);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+            animation: pulse 1s infinite;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .risk-display {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .risk-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            transition: all 0.5s ease;
+        }
+
+        .risk-score.low { color: var(--success-green); }
+        .risk-score.moderate { color: var(--warning-orange); }
+        .risk-score.high { color: var(--danger-red); }
+        .risk-score.critical { color: var(--critical-red); }
+
+        .risk-label {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .model-info {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .confidence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .confidence-bar {
+            width: 60px;
+            height: 4px;
+            background: var(--bg-surface);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--success-green);
+            transition: width 0.5s ease;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+        }
+
+        .progress-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                var(--success-green) 0%,
+                var(--warning-orange) 30%,
+                var(--danger-red) 70%,
+                var(--critical-red) 100%
+            );
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-inner {
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .vital-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vital-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-blue);
+        }
+
+        .vital-card.warning::before {
+            background: var(--warning-orange);
+        }
+
+        .vital-card.critical::before {
+            background: var(--danger-red);
+        }
+
+        .vital-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .vital-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .vital-value.warning {
+            color: var(--warning-orange);
+        }
+
+        .vital-value.critical {
+            color: var(--danger-red);
+        }
+
+        .vital-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .vital-unit {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-left: 0.25rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            padding: 1rem;
+        }
+
+        .feature-importance {
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .feature-details {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .feature-value {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 150px;
+        }
+
+        .feature-bar {
+            width: 80px;
+            height: 6px;
+            background: var(--bg-surface);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .feature-progress {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .feature-score {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-normal {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-green);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning-orange);
+        }
+
+        .status-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger-red);
+        }
+
+        .timeline-container {
+            margin-top: 2rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-time {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+        }
+
+        .timeline-event {
+            color: var(--text-primary);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .timeline-status {
+            margin-left: auto;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .alert-panel {
+            position: fixed;
+            top: 100px;
+            right: -420px;
+            width: 400px;
+            background: var(--bg-card);
+            border: 1px solid var(--danger-red);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: blur(20px);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .alert-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-danger);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .alert-panel.show {
+            right: 20px;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: var(--danger-red);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .alert-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-alert {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid;
+        }
+
+        .btn-alert-primary {
+            background: var(--danger-red);
+            border-color: var(--danger-red);
+            color: white;
+        }
+
+        .btn-alert-secondary {
+            background: transparent;
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-success {
+            background: var(--success-green);
+        }
+
+        .notification-error {
+            background: var(--danger-red);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .header-content {
+                padding: 1rem;
+            }
+
+            .alert-panel {
+                width: 90vw;
+                right: -95vw;
+            }
+
+            .alert-panel.show {
+                right: 5vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">S</div>
+                    <div class="logo-text">
+                        <h1>SepsisGuard</h1>
+                        <p>Clinical Decision Support System</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="connection-status connected" id="connectionStatus">
+                        <div class="status-indicator"></div>
+                        <span id="connectionText">Models Loaded</span>
+                    </div>
+                    <button class="notification-btn" onclick="toggleAlertPanel()">
+                        🔔
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">1</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="grid">
+                <!-- Patient Input Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon">👤</div>
+                            Patient Vitals
+                        </h2>
+                    </div>
+
+                    <form id="patientForm">
+                        <div class="input-group">
+                            <label class="input-label">Patient ID</label>
+                            <input type="text" class="input-field" id="patientId" placeholder="Enter patient ID" value="PT-2024-001">
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label class="input-label">Age</label>
+                                <input type="number" class="input-field" id="age" placeholder="Age" min="0" max="120" value="72">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Gender</label>
+                                <select class="input-field" id="gender">
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label class="input-label">Temperature (°C)</label>
+                                <input type="number" class="input-field" id="temperature" placeholder="36.5" step="0.1" value="38.7">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Heart Rate (bpm)</label>
+                                <input type="number" class="input-field" id="heartRate" placeholder="70" min="30" max="200" value="118">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label class="input-label">Respiratory Rate</label>
+                                <input type="number" class="input-field" id="respiratoryRate" placeholder="16" min="5" max="60" value="26">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Systolic BP (mmHg)</label>
+                                <input type="number" class="input-field" id="systolicBP" placeholder="120" min="60" max="250" value="88">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label class="input-label">White Blood Cells (×10³/μL)</label>
+                                <input type="number" class="input-field" id="wbc" placeholder="7.0" step="0.1" value="16.8">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Lactate (mmol/L)</label>
+                                <input type="number" class="input-field" id="lactate" placeholder="1.5" step="0.1" value="4.2">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Clinical Notes</label>
+                            <textarea class="input-field" id="notes" placeholder="Any additional clinical observations..." rows="3">Patient post-surgical day 2, developing fever and hypotension. Concerning for sepsis. Blood cultures pending.</textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="analyzeBtn">
+                            <span id="btnText">🔍 Analyze Risk</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Risk Assessment Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon">⚕️</div>
+                            Risk Assessment
+                        </h2>
+                    </div>
+
+                    <div class="risk-display" id="riskDisplay">
+                        <div class="progress-ring">
+                            <div class="progress-circle">
+                                <div class="progress-inner">
+                                    <div class="risk-score" id="riskScore">--</div>
+                                    <div class="risk-label" id="riskLabel">Enter Vitals</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="risk-description" id="riskDescription">
+                            Please enter patient vitals to calculate sepsis risk score using your trained AI models
+                        </div>
+                        
+                        <div class="model-info" id="modelInfo" style="display: none;">
+                            <div class="confidence-indicator">
+                                <span>Confidence:</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                                </div>
+                                <span id="confidenceText">0%</span>
+                            </div>
+                            <div class="model-version" id="modelVersion">
+                                XGBoost + LSTM Ensemble
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vitals-grid" id="vitalsGrid" style="display: none;">
+                        <div class="vital-card" id="tempCard">
+                            <div class="vital-value" id="tempDisplay">--</div>
+                            <div class="vital-label">Temperature</div>
+                        </div>
+                        <div class="vital-card" id="hrCard">
+                            <div class="vital-value" id="hrDisplay">--</div>
+                            <div class="vital-label">Heart Rate</div>
+                        </div>
+                        <div class="vital-card" id="bpCard">
+                            <div class="vital-value" id="bpDisplay">--</div>
+                            <div class="vital-label">Blood Pressure</div>
+                        </div>
+                        <div class="vital-card" id="lactateCard">
+                            <div class="vital-value" id="lactateDisplay">--</div>
+                            <div class="vital-label">Lactate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline and Charts -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">📊</div>
+                            Risk Timeline
+                        </h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">🎯</div>
+                            AI Feature Analysis
+                        </h3>
+                    </div>
+                    <div class="feature-importance" id="featureImportance">
+                        <div class="feature-item">
+                            <div>
+                                <div class="feature-name">Loading AI Analysis...</div>
+                                <div class="feature-details">Please analyze patient data first</div>
+                            </div>
+                            <div class="feature-value">
+                                <div class="feature-bar">
+                                    <div class="feature-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="feature-score">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">⏱️</div>
+                            Clinical Timeline
+                        </h3>
+                    </div>
+                    <div class="timeline-container" id="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-time">System</div>
+                            <div class="timeline-event">SepsisGuard AI models loaded and ready</div>
+                            <div class="timeline-status status-normal">Ready</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- High-Risk Alert Panel -->
+        <div class="alert-panel" id="alertPanel">
+            <div class="alert-header">
+                <div class="alert-title">
+                    🚨 Critical Risk Alert
+                </div>
+                <button class="close-btn" onclick="hideAlertPanel()">&times;</button>
+            </div>
+            <div class="alert-content">
+                <p><strong>Patient <span id="alertPatientId">PT-2024-001</span></strong> has been classified as <strong>HIGH RISK</strong> for sepsis by our AI models.</p>
+                <p><strong>Risk Score:</strong> <span id="alertRiskScore">--</span>%</p>
+                <p><strong>Confidence:</strong> <span id="alertConfidence">--</span>%</p>
+                <p><strong>Key Clinical Factors:</strong></p>
+                <div id="alertFactors">
+                    <div>• Loading clinical analysis...</div>
+                </div>
+                <p><strong>Model Predictions:</strong></p>
+                <div id="alertModelPreds">
+                    <div>• XGBoost: --% • LSTM: --% • Ensemble: --%</div>
+                </div>
+            </div>
+            <div class="alert-actions">
+                <button class="btn-alert btn-alert-primary" onclick="sendAlert()">📧 Send Alert</button>
+                <button class="btn-alert btn-alert-secondary" onclick="hideAlertPanel()">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let riskChart;
+        let currentPrediction = null;
+        let patientHistory = [];
+        let alertThreshold = 70;
+        let apiBaseUrl = ''; // Empty for same domain
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChart();
+            setupEventListeners();
+            checkApiConnection();
+            loadSampleData();
+        });
+
+        function setupEventListeners() {
+            const form = document.getElementById('patientForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                analyzeRisk();
+            });
+
+            // Real-time validation
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', validateInput);
+            });
+        }
+
+        async function checkApiConnection() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/health`);
+                const data = await response.json();
+                
+                updateConnectionStatus(true, data.models_loaded ? 'Models Loaded' : 'Models Loading');
+            } catch (error) {
+                console.error('API connection failed:', error);
+                updateConnectionStatus(false, 'Connection Failed');
+            }
+        }
+
+        function updateConnectionStatus(connected, message) {
+            const statusEl = document.getElementById('connectionStatus');
+            const textEl = document.getElementById('connectionText');
+            
+            statusEl.className = `connection-status ${connected ? 'connected' : 'disconnected'}`;
+            textEl.textContent = message;
+        }
+
+        function validateInput(e) {
+            const input = e.target;
+            const value = parseFloat(input.value);
+            
+            // Remove existing classes
+            input.classList.remove('warning', 'critical');
+            
+            // Add validation based on clinical thresholds
+            switch(input.id) {
+                case 'temperature':
+                    if (value > 38.3 || value < 36.0) input.classList.add('warning');
+                    if (value > 39 || value < 35) input.classList.add('critical');
+                    break;
+                case 'heartRate':
+                    if (value > 100 || value < 60) input.classList.add('warning');
+                    if (value > 120 || value < 40) input.classList.add('critical');
+                    break;
+                case 'systolicBP':
+                    if (value < 100 || value > 140) input.classList.add('warning');
+                    if (value < 90 || value > 160) input.classList.add('critical');
+                    break;
+                case 'lactate':
+                    if (value > 2.0) input.classList.add('warning');
+                    if (value > 4.0) input.classList.add('critical');
+                    break;
+                case 'wbc':
+                    if (value > 12 || value < 4) input.classList.add('warning');
+                    if (value > 15 || value < 3) input.classList.add('critical');
+                    break;
+                case 'respiratoryRate':
+                    if (value > 20) input.classList.add('warning');
+                    if (value > 25) input.classList.add('critical');
+                    break;
+            }
+        }
+
+        async function analyzeRisk() {
+            const btn = document.getElementById('analyzeBtn');
+            const btnText = document.getElementById('btnText');
+            
+            // Show loading state
+            btn.disabled = true;
+            btnText.innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing with AI...</div>';
+            
+            try {
+                // Get form data
+                const formData = getFormData();
+                
+                // Call your Python backend API
+                const response = await fetch(`${apiBaseUrl}/api/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentPrediction = result;
+                    updateRiskDisplay(result);
+                    updateVitalsDisplay(formData, result);
+                    updateFeatureImportance(result.feature_importance);
+                    updateModelInfo(result);
+                    updateTimeline(result);
+                    updateChart(result.risk_score);
+                    
+                    // Check for high risk alert
+                    if (result.risk_score > alertThreshold) {
+                        showAlert(result);
+                    }
+                    
+                    showNotification('AI analysis completed successfully', 'success');
+                } else {
+                    throw new Error(result.error || 'Prediction failed');
+                }
+
+            } catch (error) {
+                console.error('Prediction failed:', error);
+                showNotification(`Analysis failed: ${error.message}`, 'error');
+                
+                // Fallback to client-side prediction
+                const formData = getFormData();
+                const fallbackResult = calculateFallbackRisk(formData);
+                updateRiskDisplay(fallbackResult);
+                updateVitalsDisplay(formData, fallbackResult);
+            }
+            
+            // Reset button
+            btn.disabled = false;
+            btnText.innerHTML = '🔍 Analyze Risk';
+            
+            // Show results
+            document.getElementById('vitalsGrid').style.display = 'grid';
+            document.getElementById('modelInfo').style.display = 'flex';
+        }
+
+        function getFormData() {
+            return {
+                patientId: document.getElementById('patientId').value,
+                age: parseFloat(document.getElementById('age').value) || 0,
+                gender: document.getElementById('gender').value,
+                temperature: parseFloat(document.getElementById('temperature').value) || 36.5,
+                heartRate: parseFloat(document.getElementById('heartRate').value) || 70,
+                respiratoryRate: parseFloat(document.getElementById('respiratoryRate').value) || 16,
+                systolicBP: parseFloat(document.getElementById('systolicBP').value) || 120,
+                wbc: parseFloat(document.getElementById('wbc').value) || 7.0,
+                lactate: parseFloat(document.getElementById('lactate').value) || 1.5,
+                notes: document.getElementById('notes').value
+            };
+        }
+
+        function updateRiskDisplay(result) {
+            const riskScore = document.getElementById('riskScore');
+            const riskLabel = document.getElementById('riskLabel');
+            const riskDescription = document.getElementById('riskDescription');
+            
+            const score = Math.round(result.risk_score);
+            
+            // Animate score change
+            gsap.to(riskScore, {
+                duration: 1.5,
+                textContent: score + '%',
+                ease: "power2.out",
+                onUpdate: function() {
+                    const currentValue = parseInt(this.targets()[0].textContent);
+                    updateRiskColor(currentValue);
+                }
+            });
+
+            // Update risk category
+            const category = result.risk_category || getRiskCategory(score);
+            
+            riskLabel.textContent = category.level + ' Risk';
+            riskDescription.textContent = category.description;
+            
+            // Add clinical factors if available
+            if (result.clinical_factors && result.clinical_factors.length > 0) {
+                riskDescription.textContent += '. Key factors: ' + result.clinical_factors.slice(0, 3).join(', ');
+            }
+        }
+
+        function updateRiskColor(score) {
+            const riskScore = document.getElementById('riskScore');
+            riskScore.className = 'risk-score ' + getRiskColorClass(score);
+        }
+
+        function getRiskCategory(score) {
+            if (score < 30) return { level: 'Low', description: 'Minimal signs of sepsis detected' };
+            if (score < 50) return { level: 'Moderate', description: 'Some concerning signs present' };
+            if (score < 70) return { level: 'High', description: 'Multiple sepsis indicators detected' };
+            return { level: 'Critical', description: 'Severe sepsis highly likely' };
+        }
+
+        function getRiskColorClass(score) {
+            if (score < 30) return 'low';
+            if (score < 50) return 'moderate';
+            if (score < 70) return 'high';
+            return 'critical';
+        }
+
+        function updateVitalsDisplay(formData, result) {
+            // Update vital signs display with status indicators
+            updateVitalCard('tempCard', 'tempDisplay', formData.temperature, '°C', getVitalStatus('temperature', formData.temperature));
+            updateVitalCard('hrCard', 'hrDisplay', formData.heartRate, 'bpm', getVitalStatus('heartRate', formData.heartRate));
+            updateVitalCard('bpCard', 'bpDisplay', formData.systolicBP, 'mmHg', getVitalStatus('systolicBP', formData.systolicBP));
+            updateVitalCard('lactateCard', 'lactateDisplay', formData.lactate, 'mmol/L', getVitalStatus('lactate', formData.lactate));
+        }
+
+        function updateVitalCard(cardId, displayId, value, unit, status) {
+            const card = document.getElementById(cardId);
+            const display = document.getElementById(displayId);
+            
+            display.innerHTML = `${value}<span class="vital-unit">${unit}</span>`;
+            
+            // Reset classes and add status
+            card.classList.remove('warning', 'critical');
+            display.classList.remove('warning', 'critical');
+            
+            if (status !== 'normal') {
+                card.classList.add(status);
+                display.classList.add(status);
+            }
+        }
+
+        function getVitalStatus(type, value) {
+            switch(type) {
+                case 'temperature':
+                    if (value > 39 || value < 35) return 'critical';
+                    if (value > 38.3 || value < 36) return 'warning';
+                    return 'normal';
+                case 'heartRate':
+                    if (value > 120 || value < 40) return 'critical';
+                    if (value > 100 || value < 60) return 'warning';
+                    return 'normal';
+                case 'systolicBP':
+                    if (value < 90) return 'critical';
+                    if (value < 100) return 'warning';
+                    return 'normal';
+                case 'lactate':
+                    if (value > 4.0) return 'critical';
+                    if (value > 2.0) return 'warning';
+                    return 'normal';
+                default:
+                    return 'normal';
+            }
+        }
+
+        function updateFeatureImportance(features) {
+            const container = document.getElementById('featureImportance');
+            container.innerHTML = '';
+
+            if (!features || features.length === 0) {
+                container.innerHTML = '<div class="feature-item"><div class="feature-name">No feature analysis available</div></div>';
+                return;
+            }
+
+            features.forEach((feature, index) => {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'feature-item fade-in';
+                    item.innerHTML = `
+                        <div>
+                            <div class="feature-name">${feature.name}</div>
+                            <div class="feature-details">${feature.actual_value} (Normal: ${feature.normal_range})</div>
+                        </div>
+                        <div class="feature-value">
+                            <div class="status-badge status-${feature.status || 'normal'}">${(feature.status || 'normal').toUpperCase()}</div>
+                            <div class="feature-bar">
+                                <div class="feature-progress" style="width: 0%"></div>
+                            </div>
+                            <div class="feature-score">${(feature.value * 100).toFixed(0)}%</div>
+                        </div>
+                    `;
+                    container.appendChild(item);
+
+                    // Animate progress bar
+                    setTimeout(() => {
+                        const progressBar = item.querySelector('.feature-progress');
+                        gsap.to(progressBar, {
+                            duration: 1,
+                            width: (feature.value * 100) + '%',
+                            ease: "power2.out"
+                        });
+                    }, 100);
+                }, index * 200);
+            });
+        }
+
+        function updateModelInfo(result) {
+            const confidenceFill = document.getElementById('confidenceFill');
+            const confidenceText = document.getElementById('confidenceText');
+            const modelVersion = document.getElementById('modelVersion');
+            
+            const confidence = Math.round((result.confidence || 0.8) * 100);
+            
+            gsap.to(confidenceFill, {
+                duration: 1,
+                width: confidence + '%',
+                ease: "power2.out"
+            });
+            
+            confidenceText.textContent = confidence + '%';
+            
+            // Show model predictions if available
+            if (result.model_predictions) {
+                modelVersion.textContent = `XGB: ${result.model_predictions.xgboost.toFixed(1)}% | LSTM: ${result.model_predictions.lstm.toFixed(1)}%`;
+            }
+        }
+
+        function updateTimeline(result) {
+            const timeline = document.getElementById('timeline');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            const score = result.risk_score;
+            let status, statusClass, event;
+            
+            if (score < 30) {
+                status = 'Normal';
+                statusClass = 'status-normal';
+                event = 'AI Analysis: Low risk assessment completed';
+            } else if (score < 70) {
+                status = 'Warning';
+                statusClass = 'status-warning';
+                event = 'AI Analysis: Elevated risk detected - monitoring recommended';
+            } else {
+                status = 'Critical';
+                statusClass = 'status-critical';
+                event = 'AI Analysis: HIGH RISK ALERT - Immediate attention required';
+            }
+
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item fade-in';
+            timelineItem.innerHTML = `
+                <div class="timeline-time">${timeString}</div>
+                <div class="timeline-event">${event}</div>
+                <div class="timeline-status ${statusClass}">${status}</div>
+            `;
+
+            timeline.insertBefore(timelineItem, timeline.firstChild);
+
+            // Keep only last 10 items
+            while (timeline.children.length > 10) {
+                timeline.removeChild(timeline.lastChild);
+            }
+        }
+
+        function updateChart(riskScore) {
+            const now = new Date();
+            
+            patientHistory.push({
+                time: now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }),
+                risk: riskScore,
+                timestamp: now
+            });
+
+            // Keep only last 10 readings
+            if (patientHistory.length > 10) {
+                patientHistory = patientHistory.slice(-10);
+            }
+
+            const labels = patientHistory.map(item => item.time);
+            const data = patientHistory.map(item => item.risk);
+
+            riskChart.data.labels = labels;
+            riskChart.data.datasets[0].data = data;
+            
+            // Update colors based on risk level
+            const colors = data.map(risk => {
+                if (risk < 30) return 'rgba(16, 185, 129, 0.6)';
+                if (risk < 50) return 'rgba(245, 158, 11, 0.6)';
+                if (risk < 70) return 'rgba(239, 68, 68, 0.6)';
+                return 'rgba(220, 38, 38, 0.6)';
+            });
+
+            riskChart.data.datasets[0].backgroundColor = colors;
+            riskChart.data.datasets[0].borderColor = colors.map(color => color.replace('0.6', '1'));
+            
+            riskChart.update('active');
+        }
+
+        function showAlert(result) {
+            const alertPanel = document.getElementById('alertPanel');
+            const notificationBadge = document.getElementById('notificationBadge');
+            
+            // Update alert content
+            document.getElementById('alertPatientId').textContent = result.patient_id || getFormData().patientId;
+            document.getElementById('alertRiskScore').textContent = Math.round(result.risk_score);
+            document.getElementById('alertConfidence').textContent = Math.round((result.confidence || 0.8) * 100);
+            
+            // Update clinical factors
+            const factorsEl = document.getElementById('alertFactors');
+            if (result.clinical_factors && result.clinical_factors.length > 0) {
+                factorsEl.innerHTML = result.clinical_factors.map(factor => `<div>• ${factor}</div>`).join('');
+            } else {
+                factorsEl.innerHTML = '<div>• Multiple sepsis indicators present</div>';
+            }
+            
+            // Update model predictions
+            if (result.model_predictions) {
+                const predsEl = document.getElementById('alertModelPreds');
+                predsEl.innerHTML = `<div>• XGBoost: ${result.model_predictions.xgboost.toFixed(1)}% • LSTM: ${result.model_predictions.lstm.toFixed(1)}% • Ensemble: ${result.model_predictions.ensemble.toFixed(1)}%</div>`;
+            }
+            
+            notificationBadge.style.display = 'flex';
+            alertPanel.classList.add('show');
+            notificationBadge.classList.add('pulse');
+        }
+
+        function hideAlertPanel() {
+            const alertPanel = document.getElementById('alertPanel');
+            const notificationBadge = document.getElementById('notificationBadge');
+            
+            alertPanel.classList.remove('show');
+            notificationBadge.style.display = 'none';
+            notificationBadge.classList.remove('pulse');
+        }
+
+        function toggleAlertPanel() {
+            const alertPanel = document.getElementById('alertPanel');
+            if (alertPanel.classList.contains('show')) {
+                hideAlertPanel();
+            } else if (currentPrediction && currentPrediction.risk_score > alertThreshold) {
+                showAlert(currentPrediction);
+            }
+        }
+
+        async function sendAlert() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+            
+            try {
+                const formData = getFormData();
+                const alertData = {
+                    patientId: formData.patientId,
+                    riskScore: currentPrediction?.risk_score || 0,
+                    riskLevel: currentPrediction?.risk_category?.level || 'High',
+                    confidence: (currentPrediction?.confidence || 0.8) * 100,
+                    ...formData,
+                    clinicalFactors: currentPrediction?.clinical_factors || [],
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(`${apiBaseUrl}/api/alert`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(alertData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    btn.textContent = '✅ Alert Sent';
+                    showNotification('Emergency alert sent to medical team', 'success');
+                    
+                    // Add to timeline
+                    const timeline = document.getElementById('timeline');
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = 'timeline-item fade-in';
+                    timelineItem.innerHTML = `
+                        <div class="timeline-time">${timeString}</div>
+                        <div class="timeline-event">🚨 High-risk alert sent to medical team</div>
+                        <div class="timeline-status status-critical">Alert Sent</div>
+                    `;
+                    
+                    timeline.insertBefore(timelineItem, timeline.firstChild);
+                } else {
+                    btn.textContent = '❌ Failed';
+                    showNotification(result.error || 'Failed to send alert', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Alert sending failed:', error);
+                btn.textContent = '❌ Network Error';
+                showNotification('Network error. Please check connection.', 'error');
+            }
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                hideAlertPanel();
+            }, 2000);
+        }
+
+        function calculateFallbackRisk(data) {
+            // Client-side fallback when API is unavailable
+            let score = 0.0;
+            const factors = [];
+            
+            // Temperature
+            if (data.temperature > 38.3 || data.temperature < 36.0) {
+                score += 15;
+                factors.push(`Temperature abnormal (${data.temperature}°C)`);
+            }
+            
+            // Heart rate
+            if (data.heartRate > 90) {
+                score += 10;
+                factors.push(`Tachycardia (${data.heartRate} bpm)`);
+            }
+            
+            // Blood pressure
+            if (data.systolicBP < 100) {
+                score += 20;
+                factors.push(`Hypotension (${data.systolicBP} mmHg)`);
+            }
+            
+            // Lactate (most important)
+            if (data.lactate > 2.0) {
+                score += 25;
+                factors.push(`Elevated lactate (${data.lactate} mmol/L)`);
+            }
+            if (data.lactate > 4.0) {
+                score += 15;
+                factors.push(`Critically elevated lactate`);
+            }
+            
+            // WBC
+            if (data.wbc > 12 || data.wbc < 4) {
+                score += 12;
+                factors.push(`WBC abnormal (${data.wbc} ×10³/μL)`);
+            }
+            
+            // Age
+            if (data.age > 65) {
+                score += 8;
+                factors.push(`Advanced age (${data.age} years)`);
+            }
+            
+            score = Math.min(100, score);
+            
+            return {
+                success: true,
+                risk_score: score,
+                risk_probability: score / 100,
+                risk_category: getRiskCategory(score),
+                clinical_factors: factors,
+                confidence: 0.7,
+                fallback_mode: true,
+                model_predictions: {
+                    xgboost: score,
+                    lstm: score,
+                    ensemble: score
+                },
+                feature_importance: [
+                    { name: 'Lactate Level', value: Math.min(1, data.lactate / 4), actual_value: `${data.lactate} mmol/L`, normal_range: '<2.0 mmol/L', status: getVitalStatus('lactate', data.lactate) },
+                    { name: 'Temperature', value: Math.abs(data.temperature - 37) / 3, actual_value: `${data.temperature}°C`, normal_range: '36.1-37.2°C', status: getVitalStatus('temperature', data.temperature) },
+                    { name: 'Heart Rate', value: Math.max(0, (data.heartRate - 60) / 60), actual_value: `${data.heartRate} bpm`, normal_range: '60-100 bpm', status: getVitalStatus('heartRate', data.heartRate) },
+                    { name: 'Blood Pressure', value: Math.max(0, (120 - data.systolicBP) / 30), actual_value: `${data.systolicBP} mmHg`, normal_range: '90-140 mmHg', status: getVitalStatus('systolicBP', data.systolicBP) },
+                    { name: 'White Blood Cells', value: Math.abs(data.wbc - 7.5) / 7.5, actual_value: `${data.wbc} ×10³/μL`, normal_range: '4.0-11.0 ×10³/μL', status: 'normal' }
+                ].sort((a, b) => b.value - a.value).slice(0, 5)
+            };
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            
+            riskChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sepsis Risk Score (%)',
+                        data: [],
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#cbd5e1'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#f8fafc',
+                            borderColor: '#475569',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(71, 85, 105, 0.3)'
+                            },
+                            ticks: {
+                                color: 'rgba(203, 213, 225, 0.8)',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(71, 85, 105, 0.3)'
+                            },
+                            ticks: {
+                                color: 'rgba(203, 213, 225, 0.8)'
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 8
+                        }
+                    }
+                }
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        function loadSampleData() {
+            // Auto-analyze the pre-filled sample data after a short delay
+            setTimeout(() => {
+                analyzeRisk();
+            }, 1000);
+        }
+
+        // Initialize input validation on page load
+        setTimeout(() => {
+            const inputs = document.querySelectorAll('.input-field[type="number"]');
+            inputs.forEach(input => {
+                if (input.value) {
+                    validateInput({ target: input });
+                }
+            });
+        }, 500);
+    </script>
+</body>
+</html>
